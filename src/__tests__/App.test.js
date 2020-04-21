@@ -56,7 +56,7 @@ describe("App component", () => {
     apiMock.onDelete("repositories/123").reply(204);
 
     await actWait();
-
+    
     fireEvent.click(getByText("Remover"));
 
     await actWait();
