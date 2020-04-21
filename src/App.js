@@ -3,23 +3,22 @@ import api from "./services/api"
 import "./styles.css";
 
 function App() {
+  
   const [repositories , setRepositories ] = useState([]);
   
   useEffect(()=>{
     api.get("/repositories").then(response => {
-      if(response.data.lenght > 0){
-        setRepositories([...repositories,response.data])
+      if(response.data.length > 0){
+        setRepositories(response.data)
       }
-     
     });
-    
   },[]);
 
   async function handleAddRepository() {
     // TODO
     const response = await api.post("/repositories",{
       title:`Repositorio ${Date.now()}`,
-      url:" link 1",
+      url:"https://github.com/kadusouzaribeiro/testaccessibilityhelper",
       techs:["react native","node","react js"]
     });
     
@@ -28,21 +27,24 @@ function App() {
   }
 
   async function handleRemoveRepository(id) {
-    let response = await api.delete(`/repositories/${id}`);
-    console.log(response);
-    const newRepositories = repositories.filter( repository => repository.id !== id );
-    setRepositories(newRepositories);
+    
+    const response =  await api.delete(`/repositories/${id}`);
+    if (response.status == "204") {
+      setRepositories(repositories.filter( repo => repo.id !== id ))
+    }else{
+      alert('Erro ao excluir repositório');
+    }
     
   }
 
   return (
     <div>
       <ul data-testid="repository-list">
-        {repositories.map((repository,key) => (
-          <li key={key}>
-           {repository.title}  
-
-            <button onClick={() => handleRemoveRepository(repository.id)}>Remover</button>
+        {repositories.map(repository => (
+          <li key={repository.id}>{repository.title}
+            <button onClick={() => handleRemoveRepository(repository.id)}>
+              Remover
+            </button>
           </li>
         ))}
       </ul>
